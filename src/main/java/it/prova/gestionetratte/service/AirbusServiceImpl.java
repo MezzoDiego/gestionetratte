@@ -34,8 +34,7 @@ public class AirbusServiceImpl implements AirbusService{
 
 	@Override
 	public Airbus caricaSingoloElementoConTratte(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findByIdEager(id);
 	}
 
 	@Override
