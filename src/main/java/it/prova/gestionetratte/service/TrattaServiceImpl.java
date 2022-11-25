@@ -28,8 +28,7 @@ public class TrattaServiceImpl implements TrattaService {
 
 	@Override
 	public Tratta caricaSingoloElemento(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findById(id).orElse(null);
 	}
 
 	@Override
@@ -40,8 +39,7 @@ public class TrattaServiceImpl implements TrattaService {
 	@Override
 	@Transactional
 	public Tratta aggiorna(Tratta trattaInstance) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.save(trattaInstance);
 	}
 
 	@Override
