@@ -25,7 +25,7 @@ public class AirbusDTO {
 	private String codice;
 
 	@NotBlank(message = "{descrizione.notblank}")
-	@Size(min = 10, max = 50, message = "Il valore inserito '${validatedValue}' deve essere lungo tra {min} e {max} caratteri")
+	@Size(min = 5, max = 50, message = "Il valore inserito '${validatedValue}' deve essere lungo tra {min} e {max} caratteri")
 	private String descrizione;
 
 	@NotNull(message = "{dataInizioServizio.notnull}")
