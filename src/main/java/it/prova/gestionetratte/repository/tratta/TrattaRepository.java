@@ -7,7 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import it.prova.gestionetratte.model.Tratta;
 
-public interface TrattaRepository extends CrudRepository<Tratta, Long>/*, CustomTrattaRepository*/{
+public interface TrattaRepository extends CrudRepository<Tratta, Long>, CustomTrattaRepository{
+
 	@Query("from Tratta t join fetch t.airbus where t.id = ?1")
 	Tratta findSingleTrattaEager(Long id);
 	
@@ -15,4 +16,5 @@ public interface TrattaRepository extends CrudRepository<Tratta, Long>/*, Custom
 	
 	@Query("select t from Tratta t join fetch t.airbus")
 	List<Tratta> findAllTrattaEager();
+	
 }

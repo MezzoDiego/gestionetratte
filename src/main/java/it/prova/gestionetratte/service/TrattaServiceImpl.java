@@ -63,8 +63,7 @@ public class TrattaServiceImpl implements TrattaService {
 
 	@Override
 	public List<Tratta> findByExample(Tratta example) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findByExample(example);
 	}
 
 	@Override

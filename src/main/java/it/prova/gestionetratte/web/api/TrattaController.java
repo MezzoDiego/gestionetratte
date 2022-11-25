@@ -74,5 +74,11 @@ public class TrattaController {
 		Tratta trattaAggiornata = trattaService.aggiorna(trattaInput.buildTrattaModel());
 		return TrattaDTO.buildTrattaDTOFromModel(trattaAggiornata, false);
 	}
+	
+	@PostMapping("/search")
+	public List<TrattaDTO> search(@RequestBody TrattaDTO example) {
+		return TrattaDTO.createTrattaDTOListFromModelList(trattaService.findByExample(example.buildTrattaModel()),
+				false);
+	}
 
 }
