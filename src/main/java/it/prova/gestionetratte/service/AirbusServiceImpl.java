@@ -23,8 +23,7 @@ public class AirbusServiceImpl implements AirbusService{
 
 	@Override
 	public List<Airbus> listAllElementsEager() {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findAllEager();
 	}
 
 	@Override
