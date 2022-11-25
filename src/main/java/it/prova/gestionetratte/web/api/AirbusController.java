@@ -77,5 +77,11 @@ public class AirbusController {
 		Airbus airbusAggiornato = airbusService.aggiorna(airbusInput.buildAirbusModel());
 		return AirbusDTO.buildAirbusDTOFromModel(airbusAggiornato, false);
 	}
+	
+	@PostMapping("/search")
+	public List<AirbusDTO> search(@RequestBody AirbusDTO example) {
+		return AirbusDTO.createAirbusDTOListFromModelList(airbusService.findByExample(example.buildAirbusModel()),
+				false);
+	}
 
 }

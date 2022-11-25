@@ -60,8 +60,7 @@ public class AirbusServiceImpl implements AirbusService {
 
 	@Override
 	public List<Airbus> findByExample(Airbus example) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findByExample(example);
 	}
 
 	@Override
