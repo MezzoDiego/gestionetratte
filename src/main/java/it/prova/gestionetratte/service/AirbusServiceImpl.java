@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.prova.gestionetratte.model.Airbus;
 import it.prova.gestionetratte.repository.airbus.AirbusRepository;
@@ -39,18 +40,20 @@ public class AirbusServiceImpl implements AirbusService{
 	}
 
 	@Override
+	@Transactional
 	public Airbus aggiorna(Airbus airbusInstance) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional
 	public Airbus inserisciNuovo(Airbus airbusInstance) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.save(airbusInstance);
 	}
 
 	@Override
+	@Transactional
 	public void rimuovi(Long idToRemove) {
 		// TODO Auto-generated method stub
 		
@@ -64,8 +67,7 @@ public class AirbusServiceImpl implements AirbusService{
 
 	@Override
 	public Airbus findByCodiceAndDescrizione(String codice, String descrizione) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findByCodiceAndDescrizione(codice, descrizione);
 	}
 
 }

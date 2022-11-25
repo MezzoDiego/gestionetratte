@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.prova.gestionetratte.model.Tratta;
 import it.prova.gestionetratte.repository.tratta.TrattaRepository;
@@ -33,18 +34,20 @@ public class TrattaServiceImpl implements TrattaService{
 	}
 
 	@Override
+	@Transactional
 	public Tratta aggiorna(Tratta trattaInstance) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional
 	public Tratta inserisciNuovo(Tratta trattaInstance) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.save(trattaInstance);
 	}
 
 	@Override
+	@Transactional
 	public void rimuovi(Long idToRemove) {
 		// TODO Auto-generated method stub
 		
@@ -58,8 +61,7 @@ public class TrattaServiceImpl implements TrattaService{
 
 	@Override
 	public List<Tratta> findByCodiceAndDescrizione(String codice, String descrizione) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findByCodiceAndDescrizione(codice, descrizione);
 	}
 
 }
