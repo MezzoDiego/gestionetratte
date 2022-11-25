@@ -8,13 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.prova.gestionetratte.model.Airbus;
 import it.prova.gestionetratte.repository.airbus.AirbusRepository;
+import it.prova.gestionetratte.web.api.exceptions.AirbusNotFoundException;
 
 @Service
-public class AirbusServiceImpl implements AirbusService{
+public class AirbusServiceImpl implements AirbusService {
 
 	@Autowired
 	private AirbusRepository repository;
-	
+
 	@Override
 	public List<Airbus> listAllElements() {
 		// TODO Auto-generated method stub
@@ -53,8 +54,10 @@ public class AirbusServiceImpl implements AirbusService{
 	@Override
 	@Transactional
 	public void rimuovi(Long idToRemove) {
-		// TODO Auto-generated method stub
-		
+		repository.findById(idToRemove)
+				.orElseThrow(() -> new AirbusNotFoundException("Regista not found con id: " + idToRemove));
+		repository.deleteById(idToRemove);
+
 	}
 
 	@Override
