@@ -29,8 +29,7 @@ public class AirbusServiceImpl implements AirbusService {
 
 	@Override
 	public Airbus caricaSingoloElemento(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findById(id).orElse(null);
 	}
 
 	@Override
@@ -41,8 +40,7 @@ public class AirbusServiceImpl implements AirbusService {
 	@Override
 	@Transactional
 	public Airbus aggiorna(Airbus airbusInstance) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.save(airbusInstance);
 	}
 
 	@Override
@@ -55,7 +53,7 @@ public class AirbusServiceImpl implements AirbusService {
 	@Transactional
 	public void rimuovi(Long idToRemove) {
 		repository.findById(idToRemove)
-				.orElseThrow(() -> new AirbusNotFoundException("Regista not found con id: " + idToRemove));
+				.orElseThrow(() -> new AirbusNotFoundException("Airbus not found con id: " + idToRemove));
 		repository.deleteById(idToRemove);
 
 	}
