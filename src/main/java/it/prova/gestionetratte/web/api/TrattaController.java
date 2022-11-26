@@ -1,5 +1,7 @@
 package it.prova.gestionetratte.web.api;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -17,8 +19,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.prova.gestionetratte.dto.TrattaDTO;
+import it.prova.gestionetratte.model.Airbus;
+import it.prova.gestionetratte.model.Stato;
 import it.prova.gestionetratte.model.Tratta;
+import it.prova.gestionetratte.service.AirbusService;
 import it.prova.gestionetratte.service.TrattaService;
+import it.prova.gestionetratte.web.api.exceptions.CustomValidationException;
 import it.prova.gestionetratte.web.api.exceptions.IdNotNullForInsertException;
 import it.prova.gestionetratte.web.api.exceptions.TrattaNotFoundException;
 import it.prova.gestionetratte.web.api.exceptions.TratteAttiveNotFoundException;
@@ -29,6 +35,9 @@ public class TrattaController {
 
 	@Autowired
 	private TrattaService trattaService;
+	
+	@Autowired
+	private AirbusService airbusService;
 
 	@GetMapping
 	public List<TrattaDTO> getAll() {
@@ -53,7 +62,21 @@ public class TrattaController {
 		// non sta bene
 		if (trattaInput.getId() != null)
 			throw new IdNotNullForInsertException("Non è ammesso fornire un id per la creazione");
+		
+		Airbus airbusPerValidazioni = airbusService.caricaSingoloElemento(trattaInput.getAirbus().getId());
+		
+		if(trattaInput.getData().isBefore(airbusPerValidazioni.getDataInizioServizio()))
+			throw new CustomValidationException("Non e' possibile inserire una tratta avente la data di partenza inferiore a quella di inizio servizio dell airbus.");
 
+		if((trattaInput.getStato() != null && trattaInput.getData().isAfter(LocalDate.now())) || (trattaInput.getStato() != null && trattaInput.getData().isEqual(LocalDate.now()) && trattaInput.getOraDecollo().isAfter(LocalTime.now())))
+			throw new CustomValidationException("Non e' possibile inserire uno stato se la tratta deve essere ancora percorsa.");
+		
+		if(trattaInput.getStato() != null && trattaInput.getStato() == Stato.ATTIVA && trattaInput.getOraAtterraggio().isBefore(LocalTime.now()) && !trattaInput.getData().isAfter(LocalDate.now()))
+			throw new CustomValidationException("E' possibile inserire una tratta attiva solo se l'airbus non e' gia' atterrato");
+		
+		if(trattaInput.getOraDecollo().isAfter(trattaInput.getOraAtterraggio()))
+			throw new CustomValidationException("Non e' possibile inserire una tratta con orario di decollo maggiore di quello di atterraggio.");
+		
 		Tratta trattaInserita = trattaService.inserisciNuovo(trattaInput.buildTrattaModel());
 		return TrattaDTO.buildTrattaDTOFromModel(trattaInserita, true);
 	}
@@ -67,9 +90,26 @@ public class TrattaController {
 	@PutMapping("/{id}")
 	public TrattaDTO update(@Valid @RequestBody TrattaDTO trattaInput, @PathVariable(required = true) Long id) {
 		Tratta tratta = trattaService.caricaSingoloElemento(id);
+		Tratta trattaConAirbus = trattaService.caricaSingoloElementoEager(id);
 
 		if (tratta == null)
 			throw new TrattaNotFoundException("Tratta not found con id: " + id);
+		
+		if(trattaInput.getData().isBefore(trattaConAirbus.getAirbus().getDataInizioServizio()))
+			throw new CustomValidationException("Non e' possibile modificare la data mettendola minore di quella di inizio servizio del relativo airbus.");
+		
+		if(trattaInput.getOraDecollo().isAfter(trattaInput.getOraAtterraggio()))
+			throw new CustomValidationException("Non e' possibile modificare gli orari se l'orario di decollo succede quello di atterraggio.");
+		
+		if((trattaInput.getStato() != null && trattaInput.getStato() != Stato.ANNULLATA && trattaInput.getData().isAfter(LocalDate.now())) || (trattaInput.getStato() != null && trattaInput.getStato() != Stato.ANNULLATA && trattaInput.getData().isEqual(LocalDate.now()) && trattaInput.getOraDecollo().isAfter(LocalTime.now())))
+			throw new CustomValidationException("Non e' possibile attivare o concludere una tratta se l'airbus deve ancora percorrerla.");
+		
+		if((trattaInput.getStato() != null && trattaInput.getStato() == Stato.ANNULLATA && trattaInput.getData().isBefore(LocalDate.now())) || (trattaInput.getStato() != null && trattaInput.getStato() == Stato.ANNULLATA && trattaInput.getData().isEqual(LocalDate.now()) && trattaInput.getOraAtterraggio().isBefore(LocalTime.now())))
+			throw new CustomValidationException("Non e' possibile annullare una tratta se e' gia' stata percorsa.");
+		
+		if((trattaInput.getStato() != null && trattaInput.getStato() != Stato.ATTIVA && trattaInput.getData().isBefore(LocalDate.now())) || (trattaInput.getStato() != null && trattaInput.getStato() != Stato.ATTIVA && trattaInput.getData().isEqual(LocalDate.now()) && trattaInput.getOraAtterraggio().isAfter(LocalTime.now())))
+			throw new CustomValidationException("Non e' possibile modificare lo stato di una tratta se la sta attualmente percorrendo l'airbus");
+		
 
 		trattaInput.setId(id);
 		Tratta trattaAggiornata = trattaService.aggiorna(trattaInput.buildTrattaModel());

@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.prova.gestionetratte.dto.AirbusDTO;
 import it.prova.gestionetratte.model.Airbus;
+import it.prova.gestionetratte.model.Tratta;
 import it.prova.gestionetratte.service.AirbusService;
 import it.prova.gestionetratte.web.api.exceptions.AirbusNotFoundException;
+import it.prova.gestionetratte.web.api.exceptions.CustomValidationException;
 import it.prova.gestionetratte.web.api.exceptions.IdNotNullForInsertException;
 
 @RestController
@@ -69,9 +71,17 @@ public class AirbusController {
 	@PutMapping("/{id}")
 	public AirbusDTO update(@Valid @RequestBody AirbusDTO airbusInput, @PathVariable(required = true) Long id) {
 		Airbus airbus = airbusService.caricaSingoloElemento(id);
+		Airbus airbusConTratte = airbusService.caricaSingoloElementoConTratte(id);
 
 		if (airbus == null)
 			throw new AirbusNotFoundException("Airbus not found con id: " + id);
+		
+		if(airbusConTratte != null && airbusConTratte.getTratte().size() > 0) {
+			for(Tratta item : airbusConTratte.getTratte()) {
+				if(airbusInput.getDataInizioServizio().isAfter(item.getData()))
+					throw new CustomValidationException("Non e' possibile inserire la data di inizio servizio maggiore alla data di qualsiasi sua tratta.");
+			}
+		}
 
 		airbusInput.setId(id);
 		Airbus airbusAggiornato = airbusService.aggiorna(airbusInput.buildAirbusModel());

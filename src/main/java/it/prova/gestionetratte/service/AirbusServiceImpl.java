@@ -90,9 +90,9 @@ public class AirbusServiceImpl implements AirbusService {
 		for (AirbusDTO airbusItem : airbusConRelativeTratte) {
 			for (TrattaDTO trattaItem : airbusItem.getTratte()) {
 				for (TrattaDTO item : airbusItem.getTratte()) {
-					if ((item.getOraDecollo().isAfter(trattaItem.getOraDecollo())
+					if ((item.getData().isEqual(trattaItem.getData()) && item.getOraDecollo().isAfter(trattaItem.getOraDecollo())
 							&& item.getOraDecollo().isBefore(trattaItem.getOraAtterraggio()))
-							|| (item.getOraAtterraggio().isAfter(trattaItem.getOraDecollo())
+							|| (item.getData().isEqual(trattaItem.getData()) && item.getOraAtterraggio().isAfter(trattaItem.getOraDecollo())
 									&& item.getOraAtterraggio().isBefore(trattaItem.getOraAtterraggio()))) {
 						airbusItem.setConSovrapposizioni(true);
 
