@@ -33,6 +33,8 @@ public class AirbusDTO {
 
 	@NotNull(message = "{numeroPasseggeri.notnull}")
 	private Integer numeroPasseggeri;
+	
+	private Boolean conSovrapposizioni;
 
 	@JsonIgnoreProperties(value = { "airbus" })
 	private Set<TrattaDTO> tratte = new HashSet<TrattaDTO>(0);
@@ -95,6 +97,14 @@ public class AirbusDTO {
 	public void setNumeroPasseggeri(Integer numeroPasseggeri) {
 		this.numeroPasseggeri = numeroPasseggeri;
 	}
+	
+	public Boolean getConSovrapposizioni() {
+		return conSovrapposizioni;
+	}
+
+	public void setConSovrapposizioni(Boolean conSovrapposizioni) {
+		this.conSovrapposizioni = conSovrapposizioni;
+	}
 
 	public Set<TrattaDTO> getTratte() {
 		return tratte;
@@ -108,19 +118,24 @@ public class AirbusDTO {
 		return new Airbus(this.id, this.codice, this.descrizione, this.dataInizioServizio, this.numeroPasseggeri);
 	}
 	
-	public static AirbusDTO buildAirbusDTOFromModel(Airbus airbusModel, boolean includeTratte) {
+	public static AirbusDTO buildAirbusDTOFromModel(Airbus airbusModel, boolean includeTratte, boolean includeSovrapposizioni) {
 		AirbusDTO result = new AirbusDTO(airbusModel.getId(), airbusModel.getCodice(), airbusModel.getDescrizione(),
 				airbusModel.getDataInizioServizio(), airbusModel.getNumeroPasseggeri());
 		if(includeTratte)
 			result.setTratte(TrattaDTO.createTrattaDTOSetFromModelSet(airbusModel.getTratte(), false));
+		
+		if(includeSovrapposizioni)
+			result.setConSovrapposizioni(true);
 		return result;
 	}
 	
-	public static List<AirbusDTO> createAirbusDTOListFromModelList(List<Airbus> modelListInput, boolean includeTratte) {
+	public static List<AirbusDTO> createAirbusDTOListFromModelList(List<Airbus> modelListInput, boolean includeTratte, boolean includeSovrapposizioni) {
 		return modelListInput.stream().map(airbusEntity -> {
-			AirbusDTO result = AirbusDTO.buildAirbusDTOFromModel(airbusEntity,includeTratte);
+			AirbusDTO result = AirbusDTO.buildAirbusDTOFromModel(airbusEntity,includeTratte, includeSovrapposizioni);
 			if(includeTratte)
 				result.setTratte(TrattaDTO.createTrattaDTOSetFromModelSet(airbusEntity.getTratte(), false));
+			if(includeSovrapposizioni)
+				result.setConSovrapposizioni(true);
 			return result;
 		}).collect(Collectors.toList());
 	}
