@@ -2,6 +2,7 @@ package it.prova.gestionetratte.service;
 
 import java.util.List;
 
+import it.prova.gestionetratte.model.Stato;
 import it.prova.gestionetratte.model.Tratta;
 
 public interface TrattaService {
@@ -20,4 +21,6 @@ public interface TrattaService {
 	List<Tratta> findByExample(Tratta example);
 
 	List<Tratta> findByCodiceAndDescrizione(String codice, String descrizione);
+	
+	void concludiTratte();
 }

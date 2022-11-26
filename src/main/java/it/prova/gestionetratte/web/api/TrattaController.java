@@ -21,6 +21,7 @@ import it.prova.gestionetratte.model.Tratta;
 import it.prova.gestionetratte.service.TrattaService;
 import it.prova.gestionetratte.web.api.exceptions.IdNotNullForInsertException;
 import it.prova.gestionetratte.web.api.exceptions.TrattaNotFoundException;
+import it.prova.gestionetratte.web.api.exceptions.TratteAttiveNotFoundException;
 
 @RestController
 @RequestMapping("api/tratta")
@@ -79,6 +80,11 @@ public class TrattaController {
 	public List<TrattaDTO> search(@RequestBody TrattaDTO example) {
 		return TrattaDTO.createTrattaDTOListFromModelList(trattaService.findByExample(example.buildTrattaModel()),
 				false);
+	}
+	
+	@GetMapping("/concludiTratte")
+	public void concludiTratte() {
+		trattaService.concludiTratte();
 	}
 
 }
